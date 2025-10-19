@@ -1,0 +1,278 @@
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user of the ChronoTrack application.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user."
+        },
+        "email": {
+          "type": "string",
+          "description": "User's email address.",
+          "format": "email"
+        },
+        "fullName": {
+          "type": "string",
+          "description": "User's full name."
+        },
+        "settingsId": {
+          "type": "string",
+          "description": "Reference to UserSettings. (Relationship: User 1:1 UserSettings)"
+        }
+      },
+      "required": [
+        "id",
+        "email",
+        "fullName"
+      ]
+    },
+    "UserSettings": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "UserSettings",
+      "type": "object",
+      "description": "Represents user-specific settings for the ChronoTrack application.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user settings."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:1 UserSettings)"
+        },
+        "theme": {
+          "type": "string",
+          "description": "The user's preferred theme (e.g., light, dark).",
+          "format": "string"
+        },
+        "pomodoroDuration": {
+          "type": "number",
+          "description": "The user's preferred pomodoro duration (in minutes)."
+        },
+        "reminderEnabled": {
+          "type": "boolean",
+          "description": "Flag indicating whether reminders are enabled."
+        }
+      },
+      "required": [
+        "id",
+        "userId"
+      ]
+    },
+    "TimeEntry": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "TimeEntry",
+      "type": "object",
+      "description": "Represents a single time tracking entry.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the time entry."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N TimeEntry)"
+        },
+        "projectId": {
+          "type": "string",
+          "description": "Reference to Project. (Relationship: Project 1:N TimeEntry)"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the time entry."
+        },
+        "startTime": {
+          "type": "string",
+          "description": "The start time of the time entry.",
+          "format": "date-time"
+        },
+        "endTime": {
+          "type": "string",
+          "description": "The end time of the time entry. Null if the entry is still running.",
+          "format": "date-time"
+        },
+        "billable": {
+          "type": "boolean",
+          "description": "Indicates whether the time entry is billable."
+        },
+        "tagIds": {
+          "type": "array",
+          "description": "References to Tags. (Relationship: Tag N:N TimeEntry)",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "startTime"
+      ]
+    },
+    "Project": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Project",
+      "type": "object",
+      "description": "Represents a project to which time entries can be associated.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the project."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N Project)"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the project."
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the project."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "name"
+      ]
+    },
+    "Tag": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Tag",
+      "type": "object",
+      "description": "Represents a tag that can be associated with time entries.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the tag."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N Tag)"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the tag."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "name"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profiles.  Authorization is based on the 'userId' parameter. This is private user data.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/settings/{settingsId}",
+        "definition": {
+          "entityName": "UserSettings",
+          "schema": {
+            "$ref": "#/backend/entities/UserSettings"
+          },
+          "description": "Stores user-specific settings. Authorization is based on the 'userId' parameter. This is private user data.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "settingsId",
+              "description": "The unique identifier for the user settings."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/timeEntries/{timeEntryId}",
+        "definition": {
+          "entityName": "TimeEntry",
+          "schema": {
+            "$ref": "#/backend/entities/TimeEntry"
+          },
+          "description": "Stores time entries associated with a user. Authorization is based on the 'userId' parameter. This is private user data.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "timeEntryId",
+              "description": "The unique identifier for the time entry."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/projects/{projectId}",
+        "definition": {
+          "entityName": "Project",
+          "schema": {
+            "$ref": "#/backend/entities/Project"
+          },
+          "description": "Stores projects created by the user. Authorization is based on the 'userId' parameter. This is private user data.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "projectId",
+              "description": "The unique identifier for the project."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/tags/{tagId}",
+        "definition": {
+          "entityName": "Tag",
+          "schema": {
+            "$ref": "#/backend/entities/Tag"
+          },
+          "description": "Stores tags created by the user. Authorization is based on the 'userId' parameter. This is private user data.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "tagId",
+              "description": "The unique identifier for the tag."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to ensure security, scalability, and ease of debugging, following the principles of Authorization Independence, Clarity of Intent, and DBAC. It leverages denormalization and structural segregation to simplify security rules and enable efficient data retrieval. The design incorporates path-based ownership for private user data and standardizes access patterns using membership maps for collaborative data.\n\nAuthorization Independence is achieved by avoiding `get()` calls in security rules. User settings and project data are stored in subcollections of the user document so their authorization contexts do not depend on parent documents. The 'userId' field is present in all documents within the /users/{userId} collection group.\n\nStructural Segregation is implemented by separating data with different access requirements into distinct collections. User-specific data (settings, projects, time entries, tags) resides under the `/users/{userId}` path, while global roles (admin) have their dedicated collections. This ensures that all documents within a collection share the same security posture.\n\nQAPs (Rules are not Filters) are supported through structural segregation. List operations are secured by path-based ownership and membership maps, ensuring that users can only access data they own or are explicitly authorized to access."
+  }
+}

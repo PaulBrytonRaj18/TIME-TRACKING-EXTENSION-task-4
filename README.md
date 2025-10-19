@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ChronoTrack
+
+ChronoTrack is a modern, full-featured time and productivity tracker built with Next.js and Firebase. It provides real-time data synchronization, offline capabilities, and a clean, customizable user interface with light and dark modes.
+
+## Features
+
+- **Real-time Time Tracking**: Start and stop a timer for your tasks.
+- **Project Management**: Create, edit, and delete projects with custom names and colors.
+- **Dynamic Dashboard**: Get an at-a-glance overview of your tracked time, including daily summaries and weekly trends.
+- **Persistent Data**: All time entries and projects are saved to a Firestore database.
+- **Real-time Sync**: Data is synchronized in real-time across all your devices.
+- **Offline Support**: The application is configured to work offline, automatically syncing your changes when you reconnect.
+- **Customizable Themes**: Supports light, dark, and system-default themes, with preferences saved to your user profile.
+- **User Settings**: Customize application behavior, such as Pomodoro timer duration.
+
+## Tech Stack
+
+- **Framework**: [Next.js](https://nextjs.org/) (App Router)
+- **UI**: [React](https://reactjs.org/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **UI Components**: [ShadCN UI](https://ui.shadcn.com/)
+- **Backend & Database**: [Firebase](https://firebase.google.com/) (Firestore, Authentication)
+- **Icons**: [Lucide React](https://lucide.dev/guide/packages/lucide-react)
+- **Charts**: [Recharts](https://recharts.org/)
+- **Forms**: [React Hook Form](https://react-hook-form.com/) & [Zod](https://zod.dev/)
 
 ## Getting Started
 
-First, run the development server:
+To run the project locally, follow these steps:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1.  **Clone the repository:**
+    ```bash
+    git clone <your-repository-url>
+    cd <repository-name>
+    ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2.  **Install dependencies:**
+    The project uses `npm` as its package manager.
+    ```bash
+    npm install
+    ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3.  **Set up Firebase:**
+    This project is pre-configured to work with Firebase. Ensure you have a `firebaseConfig` object in `src/firebase/config.ts`. The application uses Firebase App Hosting's environment variables for production deployment, so your local configuration will be used for development.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4.  **Run the development server:**
+    ```bash
+    npm run dev
+    ```
 
-## Learn More
+Open [http://localhost:9002](http://localhost:9002) with your browser to see the result.
 
-To learn more about Next.js, take a look at the following resources:
+## Deployment
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This application is optimized for deployment on [Firebase App Hosting](https://firebase.google.com/docs/app-hosting). The `apphosting.yaml` file is already configured. Deploy

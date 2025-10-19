@@ -1,0 +1,183 @@
+/**
+ * @fileOverview Firestore Security Rules for ChronoTrack application.
+ *
+ * Core Philosophy:
+ * This ruleset enforces a strict user-ownership model for all personal data
+ * (settings, projects, time entries, tags).  Each user has full control over their
+ * own data, and no access to other users' data.
+ *
+ * Data Structure:
+ * All user-specific data is nested under /users/{userId}.  This includes:
+ * - /users/{userId} (User profile)
+ * - /users/{userId}/settings/{settingsId} (User settings)
+ * - /users/{userId}/timeEntries/{timeEntryId} (Time entries)
+ * - /users/{userId}/projects/{projectId} (Projects)
+ * - /users/{userId}/tags/{tagId} (Tags)
+ *
+ * Key Security Decisions:
+ * - User data is strictly private.  Listing all users is disallowed.
+ * - All write operations are validated to ensure the authenticated user ID
+ *   matches the user ID in the path.
+ * - Data model assumes single ownership, no shared access.
+ *
+ * Denormalization for Authorization:
+ *  All documents under `/users/{userId}` are considered owned by that user.
+ *  There's no need for `get()` calls or complex role lookups.  The path itself
+ *  is the source of truth for authorization.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Enforces access control for user profiles.
+     * @path /users/{userId}
+     * @allow (create) User with ID 'user123' can create their profile.
+     *    - auth.uid: 'user123'
+     *    - request.resource.data.id: 'user123'
+     * @allow (get) User with ID 'user123' can read their profile.
+     *    - auth.uid: 'user123'
+     * @allow (update) User with ID 'user123' can update their profile.
+     *    - auth.uid: 'user123'
+     * @allow (delete) User with ID 'user123' can delete their profile.
+     *    - auth.uid: 'user123'
+     * @deny (create) User with ID 'user456' cannot create a profile for 'user123'.
+     *    - auth.uid: 'user456'
+     *    - request.resource.data.id: 'user123'
+     * @principle Enforces document ownership for writes.
+     */
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Enforces access control for user settings.
+     * @path /users/{userId}/settings/{settingsId}
+     * @allow (create) User with ID 'user123' can create their settings.
+     *    - auth.uid: 'user123'
+     *    - request.resource.data.userId: 'user123'
+     * @allow (get) User with ID 'user123' can read their settings.
+     *    - auth.uid: 'user123'
+     * @allow (update) User with ID 'user123' can update their settings.
+     *    - auth.uid: 'user123'
+     * @allow (delete) User with ID 'user123' can delete their settings.
+     *    - auth.uid: 'user123'
+     * @deny (create) User with ID 'user456' cannot create settings for 'user123'.
+     *    - auth.uid: 'user456'
+     *    - request.resource.data.userId: 'user123'
+     * @principle Restricts access to a user's own data tree.
+     */
+    match /users/{userId}/settings/{settingsId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.userId == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Enforces access control for time entries.
+     * @path /users/{userId}/timeEntries/{timeEntryId}
+     * @allow (create) User with ID 'user123' can create time entries.
+     *    - auth.uid: 'user123'
+     *    - request.resource.data.userId: 'user123'
+     * @allow (get) User with ID 'user123' can read their time entries.
+     *    - auth.uid: 'user123'
+     * @allow (update) User with ID 'user123' can update their time entries.
+     *    - auth.uid: 'user123'
+     * @allow (delete) User with ID 'user123' can delete their time entries.
+     *    - auth.uid: 'user123'
+     * @deny (create) User with ID 'user456' cannot create time entries for 'user123'.
+     *    - auth.uid: 'user456'
+     *    - request.resource.data.userId: 'user123'
+     * @principle Restricts access to a user's own data tree.
+     */
+    match /users/{userId}/timeEntries/{timeEntryId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.userId == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Enforces access control for projects.
+     * @path /users/{userId}/projects/{projectId}
+     * @allow (create) User with ID 'user123' can create projects.
+     *    - auth.uid: 'user123'
+     *    - request.resource.data.userId: 'user123'
+     * @allow (get) User with ID 'user123' can read their projects.
+     *    - auth.uid: 'user123'
+     * @allow (update) User with ID 'user123' can update their projects.
+     *    - auth.uid: 'user123'
+     * @allow (delete) User with ID 'user123' can delete their projects.
+     *    - auth.uid: 'user123'
+     * @deny (create) User with ID 'user456' cannot create projects for 'user123'.
+     *    - auth.uid: 'user456'
+     *    - request.resource.data.userId: 'user123'
+     * @principle Restricts access to a user's own data tree.
+     */
+    match /users/{userId}/projects/{projectId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.userId == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Enforces access control for tags.
+     * @path /users/{userId}/tags/{tagId}
+     * @allow (create) User with ID 'user123' can create tags.
+     *    - auth.uid: 'user123'
+     *    - request.resource.data.userId: 'user123'
+     * @allow (get) User with ID 'user123' can read their tags.
+     *    - auth.uid: 'user123'
+     * @allow (update) User with ID 'user123' can update their tags.
+     *    - auth.uid: 'user123'
+     * @allow (delete) User with ID 'user123' can delete their tags.
+     *    - auth.uid: 'user123'
+     * @deny (create) User with ID 'user456' cannot create tags for 'user123'.
+     *    - auth.uid: 'user456'
+     *    - request.resource.data.userId: 'user123'
+     * @principle Restricts access to a user's own data tree.
+     */
+    match /users/{userId}/tags/{tagId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.userId == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Helper function to check if the requesting user is the owner of the document.
+     * @param {string} userId - The user ID from the path.
+     * @returns {boolean} - True if the requesting user's UID matches the userId, false otherwise.
+     */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /**
+     * @description Helper function to check if the requesting user is the owner of the existing document.
+     * @param {string} userId - The user ID from the path.
+     * @returns {boolean} - True if the requesting user's UID matches the userId and document exists, false otherwise.
+     */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+
+    /**
+     * @description Helper function to determine if a user is signed in.
+     * @returns {boolean} - True if the user is signed in, false otherwise.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+  }
+}
