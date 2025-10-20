@@ -1,8 +1,6 @@
 # TIME TRACKING CHROME EXTENSION - task 4
 ***
 
-## ChronoTrack
-
 *Company*: CODTECH IT SOLUTIONS
 
 *Name*: Paul Bryton Raj
@@ -16,6 +14,7 @@
 *MENTOR*: **NEELA SANTHOSH**
 
 
+# ChronoTrack
 ChronoTrack is a modern, full-featured time and productivity tracker built with Next.js and Firebase. It provides real-time data synchronization, offline capabilities, and a clean, customizable user interface with light and dark modes.
 
 **Output**
