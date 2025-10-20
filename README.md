@@ -15,6 +15,17 @@
 
 ChronoTrack is a modern, full-featured time and productivity tracker built with Next.js and Firebase. It provides real-time data synchronization, offline capabilities, and a clean, customizable user interface with light and dark modes.
 
+**Output**
+<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/2c4ae701-bbb0-423e-9680-8e48df00a2b5" />
+
+<img width="1917" height="1079" alt="image" src="https://github.com/user-attachments/assets/00ace9fa-ca5e-416d-8d13-dcf3706eb510" />
+
+<img width="1919" height="889" alt="image" src="https://github.com/user-attachments/assets/df58af7f-4c9d-4c81-833f-156f1b109d4b" />
+
+<img width="1919" height="902" alt="image" src="https://github.com/user-attachments/assets/474fa75f-7403-4c4e-90a2-19d30252958e" />
+
+
+
 ## Features
 
 - **Real-time Time Tracking**: Start and stop a timer for your tasks.
