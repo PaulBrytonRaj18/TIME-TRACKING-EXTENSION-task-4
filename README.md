@@ -1,5 +1,12 @@
 # ChronoTrack
 
+*Company*: CODTECH IT SOLUTIONS
+*Name*: Paul Bryton Raj
+*INTERN ID*: CY06DY2622
+*DOMAIN*: Full Stack Developement
+*DURATION*: 4 weeks
+*MENTOR*: **NEELA SANTHOSH**
+
 ChronoTrack is a modern, full-featured time and productivity tracker built with Next.js and Firebase. It provides real-time data synchronization, offline capabilities, and a clean, customizable user interface with light and dark modes.
 
 ## Features
