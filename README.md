@@ -1,4 +1,7 @@
-# ChronoTrack
+# TIME TRACKING CHROME EXTENSION - task 4
+***
+
+## ChronoTrack
 
 *Company*: CODTECH IT SOLUTIONS
 
